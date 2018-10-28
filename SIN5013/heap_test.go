@@ -5,9 +5,8 @@ import (
 )
 
 /*
-	A posição 0 está sendo ignorada para que o código reflita exatmente o conteúdo descrito
-	A após a execusão o heap deve estar correto. Onde o 100 assumirá a posição 1
-	e o 36 passará para a posição 3
+	A posição 0 está sendo ignorada para que o código reflita exatamente o conteúdo do artigo.
+	Após a execucão do algoritmo o vetor deve ser um heap, pois o 100 assumirá a posição 1 e o 36 passará para a posição 3.
 */
 func TestMaxHEAPFY(t *testing.T) {
 
@@ -15,7 +14,46 @@ func TestMaxHEAPFY(t *testing.T) {
 
 	MaxHEAPFY(vetor, 9, 1)
 
-	if vetor[1] != 100 || vetor[3] != 36 {
-		t.Errorf("Vetor não esta no formato heap")
+	if !CheckIsHeap(vetor, 9) {
+		t.Errorf("MAX-HEAPFY não funcionou")
 	}
+}
+
+/*
+	A posição 0 está sendo ignorada para que o código reflita exatamente o conteúdo do artigo.
+	Após a execucão do algoritmo o vetor deve ser um heap
+*/
+func TestBuildMaxHEAP(t *testing.T) {
+
+	vetor := []int{0, 17, 19, 2, 36, 25, 3, 1, 100, 7}
+
+	BuildMaxHEAP(vetor, 9)
+
+	if !CheckIsHeap(vetor, 9) {
+		t.Errorf("BUILD-MAX-HEAPFY não funcionou")
+	}
+}
+
+func TestHeapSort(t *testing.T) {
+
+	vetor := []int{0, 17, 19, 2, 36, 25, 3, 1, 100, 7}
+
+	vetorOrdenado := HeapSort(vetor, 9)
+
+	if !CheckOrdem(vetorOrdenado, len(vetorOrdenado)) {
+		t.Errorf("Heap-Sort não funcionou")
+	}
+}
+
+func CheckOrdem(vetor []int, quantidadeItens int) bool {
+
+	for i := 0; i < quantidadeItens; i++ {
+		if i > 0 {
+			if vetor[i] > vetor[i-1] {
+				return false
+			}
+		}
+	}
+
+	return true
 }
