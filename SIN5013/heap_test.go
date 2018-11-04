@@ -38,22 +38,9 @@ func TestHeapSort(t *testing.T) {
 
 	vetor := []int{0, 17, 19, 2, 36, 25, 3, 1, 100, 7}
 
-	vetorOrdenado := HeapSort(vetor, 9)
+	HeapSort(vetor, 9)
 
-	if !CheckOrdem(vetorOrdenado, len(vetorOrdenado)) {
+	if !CheckOrdem(vetor, 1, 9) {
 		t.Errorf("Heap-Sort não funcionou")
 	}
-}
-
-func CheckOrdem(vetor []int, quantidadeItens int) bool {
-
-	for i := 0; i < quantidadeItens; i++ {
-		if i > 0 {
-			if vetor[i] > vetor[i-1] {
-				return false
-			}
-		}
-	}
-
-	return true
 }

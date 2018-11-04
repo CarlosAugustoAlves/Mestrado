@@ -5,6 +5,7 @@ import (
 	"math"
 )
 
+//MaxHEAPFY função que ajusta o heap a partir do elemento "posicaoItem"
 func MaxHEAPFY(vetor []int, numeroElementos int, posicaoItem int) {
 	posicaoFilhoEsquerdo := posicaoItem * 2
 	posicaoFilhoDireito := ((posicaoItem * 2) + 1)
@@ -16,7 +17,8 @@ func MaxHEAPFY(vetor []int, numeroElementos int, posicaoItem int) {
 		posicaoItemMaior = posicaoItem
 	}
 
-	if posicaoFilhoDireito <= numeroElementos && vetor[posicaoFilhoDireito] > vetor[posicaoItemMaior] {
+	if posicaoFilhoDireito <= numeroElementos &&
+		vetor[posicaoFilhoDireito] > vetor[posicaoItemMaior] {
 
 		posicaoItemMaior = posicaoFilhoDireito
 	}
@@ -30,6 +32,7 @@ func MaxHEAPFY(vetor []int, numeroElementos int, posicaoItem int) {
 	}
 }
 
+//BuildMaxHEAP função que torna o vetor um Max Heap
 func BuildMaxHEAP(vetor []int, numeroElementos int) {
 
 	for indexElemento := int(math.Floor(float64(numeroElementos / 2))); indexElemento >= 1; indexElemento-- {
@@ -37,6 +40,7 @@ func BuildMaxHEAP(vetor []int, numeroElementos int) {
 	}
 }
 
+//CheckIsHeap veriricar se o vetor é um heap
 func CheckIsHeap(vetor []int, numeroElementosHeap int) bool {
 
 	indexItemVerificacao := 1
@@ -60,20 +64,24 @@ func CheckIsHeap(vetor []int, numeroElementosHeap int) bool {
 	return true
 }
 
-func HeapSort(vetor []int, numeroElementos int) []int {
+//HeapSort ordena um vetor utilizando o heap
+func HeapSort(vetor []int, numeroElementos int) {
 
-	var vetorOrdenado []int
+	BuildMaxHEAP(vetor, numeroElementos)
+
+	var numeroElementosAuxiliar int
+	numeroElementosAuxiliar = numeroElementos
 
 	for numeroElementos > 1 {
-		BuildMaxHEAP(vetor, numeroElementos)
-		vetorOrdenado = append(vetorOrdenado, vetor[1])
-		vetor = append(vetor[:1], vetor[2:]...)
+		//Invertendo os valores no vetor
+		vetor[1], vetor[numeroElementos] = vetor[numeroElementos], vetor[1]
+
+		numeroElementosAuxiliar--
+
+		MaxHEAPFY(vetor, numeroElementosAuxiliar, 1)
+
 		numeroElementos--
 	}
-
-	vetorOrdenado = append(vetorOrdenado, vetor[1])
-
-	return vetorOrdenado
 }
 
 func main() {
