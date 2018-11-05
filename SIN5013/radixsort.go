@@ -6,13 +6,14 @@ import "strconv"
 func RadixSort(vetor []int, numeroElementos int, numeroDigito int) {
 
 	vetorDigito := make([]int, numeroElementos)
+	posicaoInicio := 0
 
 	for i := (numeroDigito - 1); i >= 0; i-- {
 
-		preencherVetorDigito(vetor, vetorDigito, numeroElementos, i) //análise assintótica: numeroDigito*Theta(n)
+		preencherVetorDigito(vetor, vetorDigito, posicaoInicio, numeroElementos, i) //análise assintótica: numeroDigito*Theta(n)
 
 		var maiorNumero int
-		maiorNumero = obterMaximo(vetorDigito, 0, numeroElementos, maiorNumero) //análise assintótica: numeroDigito*Theta(n)
+		maiorNumero = obterMaximo(vetorDigito, posicaoInicio, numeroElementos, maiorNumero) //análise assintótica: numeroDigito*Theta(n)
 
 		vetorInfoPosicaoTrocada := ordenarLinear(vetorDigito, numeroElementos, maiorNumero) //análise assintótica: numeroDigito*Theta(n)
 
@@ -25,10 +26,10 @@ func RadixSort(vetor []int, numeroElementos int, numeroDigito int) {
 	}
 }
 
-func preencherVetorDigito(vetor []int, vetorDigito []int, numeroElementos int, posicaoDigito int) {
+func preencherVetorDigito(vetor []int, vetorDigito []int, posicaoInicio int, numeroElementos int, posicaoDigito int) {
 
-	for i := 0; i < numeroElementos; i++ {
-		valorDigitoString := strconv.Itoa(vetor[i])                          //converte o número para string
+	if posicaoInicio < numeroElementos {
+		valorDigitoString := strconv.Itoa(vetor[posicaoInicio])              //converte o número para string
 		valorDigitoString = string([]rune(valorDigitoString)[posicaoDigito]) //obtem caracter por posição
 		valorDigito, err := strconv.Atoi(valorDigitoString)                  //convertendo a caracter para int
 
@@ -36,26 +37,30 @@ func preencherVetorDigito(vetor []int, vetorDigito []int, numeroElementos int, p
 			panic(err)
 		}
 
-		vetorDigito[i] = valorDigito
+		vetorDigito[posicaoInicio] = valorDigito
+
+		posicaoInicio++
+
+		preencherVetorDigito(vetor, vetorDigito, posicaoInicio, numeroElementos, posicaoDigito)
 	}
 }
 
-func obterMaximo(vetor []int, posicaoInicio int, posicaoFim int, valorMaximo int) int {
+func obterMaximo(vetorDigito []int, posicaoInicio int, posicaoFim int, valorMaximo int) int {
 
 	if posicaoInicio < posicaoFim {
 
-		if valorMaximo < vetor[posicaoInicio] {
-			valorMaximo = vetor[posicaoInicio]
+		if valorMaximo < vetorDigito[posicaoInicio] {
+			valorMaximo = vetorDigito[posicaoInicio]
 		}
 
 		posicaoInicio++
-		valorMaximo = obterMaximo(vetor, posicaoInicio, posicaoFim, valorMaximo)
+		valorMaximo = obterMaximo(vetorDigito, posicaoInicio, posicaoFim, valorMaximo)
 	}
 
 	return valorMaximo
 }
 
-func ordenarLinear(vetorEntrada []int, numeroElementos int, maiorNumero int) []int {
+func ordenarLinear(vetorDigito []int, numeroElementos int, maiorNumero int) []int {
 
 	vetorInfoPosicaoTrocada := make([]int, numeroElementos)
 	var vetorAuxiliar []int
@@ -67,7 +72,7 @@ func ordenarLinear(vetorEntrada []int, numeroElementos int, maiorNumero int) []i
 
 	//Preencher a quantidade de vezes que o elemento I aparece no vetor de entrada
 	for i := 0; i < numeroElementos; i++ {
-		vetorAuxiliar[vetorEntrada[i]] = vetorAuxiliar[vetorEntrada[i]] + 1
+		vetorAuxiliar[vetorDigito[i]] = vetorAuxiliar[vetorDigito[i]] + 1
 	}
 
 	//acumulando os valores do vetor onde elemelento I será a soma dos anteriores
@@ -80,8 +85,8 @@ func ordenarLinear(vetorEntrada []int, numeroElementos int, maiorNumero int) []i
 	//isto faz com que o altoritmo seja estável
 	for i := (numeroElementos - 1); i >= 0; i-- {
 
-		vetorInfoPosicaoTrocada[i] = vetorAuxiliar[vetorEntrada[i]] - 1
-		vetorAuxiliar[vetorEntrada[i]] = vetorAuxiliar[vetorEntrada[i]] - 1
+		vetorInfoPosicaoTrocada[i] = vetorAuxiliar[vetorDigito[i]] - 1
+		vetorAuxiliar[vetorDigito[i]] = vetorAuxiliar[vetorDigito[i]] - 1
 	}
 
 	return vetorInfoPosicaoTrocada
