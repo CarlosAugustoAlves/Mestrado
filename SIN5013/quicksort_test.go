@@ -13,7 +13,7 @@ func TestQuickSort(t *testing.T) {
 	QuickSort(vetor, posicaoInicio, posicaoFinal)
 
 	if !CheckOrdem(vetor, posicaoInicio, posicaoFinal) {
-		t.Errorf("Heap-Sort não funcionou")
+		t.Errorf("Quuick Sort não funcionou")
 	}
 }
 
@@ -25,18 +25,18 @@ func TestParticione(t *testing.T) {
 
 	posicaoPivo := Particione(vetor, posicaoInicio, posicaoFinal)
 
-	if !CheckParticioneLadoDireito(vetor, posicaoPivo, posicaoFinal) ||
-		!CheckParticioneLadoEsquerdo(vetor, posicaoPivo, posicaoInicio) {
+	if !checkParticioneLadoDireito(vetor, posicaoPivo, posicaoFinal) ||
+		!checkParticioneLadoEsquerdo(vetor, posicaoPivo, posicaoInicio) {
 		t.Errorf("Particione não funcionou")
 	}
 }
 
-func CheckParticioneLadoDireito(vetor []int, posicaoPivo int, posicaoFinal int) bool {
+func checkParticioneLadoDireito(vetor []int, posicaoPivo int, posicaoFinal int) bool {
 
 	if posicaoPivo < posicaoFinal {
 		if vetor[posicaoPivo] < vetor[posicaoFinal] {
 			posicaoFinal--
-			return CheckParticioneLadoDireito(vetor, posicaoPivo, posicaoFinal)
+			return checkParticioneLadoDireito(vetor, posicaoPivo, posicaoFinal)
 		}
 
 		return false
@@ -45,12 +45,12 @@ func CheckParticioneLadoDireito(vetor []int, posicaoPivo int, posicaoFinal int) 
 	return true
 }
 
-func CheckParticioneLadoEsquerdo(vetor []int, posicaoPivo int, posicaoInicio int) bool {
+func checkParticioneLadoEsquerdo(vetor []int, posicaoPivo int, posicaoInicio int) bool {
 
 	if posicaoPivo > posicaoInicio {
 		if vetor[posicaoPivo] > vetor[posicaoInicio] {
 			posicaoInicio++
-			return CheckParticioneLadoDireito(vetor, posicaoPivo, posicaoInicio)
+			return checkParticioneLadoDireito(vetor, posicaoPivo, posicaoInicio)
 		}
 		return false
 	}
