@@ -4,11 +4,25 @@ package main
 func QuickSort(vetor []int, posicaoInicio int, posicaoFinal int) {
 
 	if posicaoInicio < posicaoFinal {
-		posicaoPivo := Particione(vetor, posicaoInicio, posicaoFinal)
+		posicaoPivo := Particione2(vetor, posicaoInicio, posicaoFinal)
 
 		QuickSort(vetor, posicaoInicio, posicaoPivo-1)
 		QuickSort(vetor, posicaoPivo+1, posicaoFinal)
 	}
+}
+
+//Particione2 retorna a posição do pivô
+func Particione2(v []int, p int, r int) int {
+	var t int
+	for i := p + 1; i <= r; i++ {
+		if v[p] > v[i] {
+			t = v[p]
+			v[p] = v[i]
+			v[i] = t
+		}
+	}
+
+	return p
 }
 
 //Particione retorna a posição do pivô
