@@ -3,7 +3,7 @@ import collections
 gama = 1
 reward_default = 1
 state_count = 10
-epson = 0.9
+epson = 1 #epson com valor acima de 0.9 não é levado em consideração
 matrix_states_result = []
 goal_state = 4
 
@@ -94,7 +94,7 @@ matrix_complete = [fill_transition_matrix('N'), fill_transition_matrix('S'),
 
 build_iteration_zero()
 
-for iteration_index in range(1, 10):
+for iteration_index in range(1, 11):
     state_collection = [State() for i in range(state_count)]
     matrix_states_result.append(state_collection)
 
@@ -106,7 +106,7 @@ for iteration_index in range(1, 10):
         matrix_states_result[iteration_index][current_state_index].value_fuction(
             current_state_index, iteration_index)
 
-        if (matrix_states_result[iteration_index][current_state_index].value - matrix_states_result[iteration_index - 1][current_state_index].value) < epson:
+        if epson < 1 and (matrix_states_result[iteration_index][current_state_index].value - matrix_states_result[iteration_index - 1][current_state_index].value) < epson:
             matrix_states_result[iteration_index][current_state_index].converge = True
 
 for i, matrix_states_result_item in enumerate(matrix_states_result[9]):
