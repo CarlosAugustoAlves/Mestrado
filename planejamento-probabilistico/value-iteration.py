@@ -3,7 +3,7 @@ import collections
 gama = 1
 reward_default = 1
 state_count = 10
-epson = 1 #epson com valor acima de 0.9 não é levado em consideração
+epson = 0.00001  # epson com valor acima de 0.9 não é levado em consideração
 matrix_states_result = []
 goal_state = 4
 
@@ -72,17 +72,17 @@ class State(object):
     def value_fuction(self, current_state_index, iteration_index):
 
         for matrix_index, matrix_item in enumerate(matrix_complete):
-            value_candidate = None
+            calculated_value = None
             for next_state, percent_transition in enumerate(matrix_item[current_state_index]):
                 if percent_transition > 0:
-                    if value_candidate == None:
-                        value_candidate = 0
-                    value_candidate += self.reward_calc(current_state_index,
+                    if calculated_value == None:
+                        calculated_value = 0
+                    calculated_value += self.reward_calc(current_state_index,
                                                         percent_transition, next_state, iteration_index)
 
-            if value_candidate != None and (self.value == None or value_candidate < self.value):
+            if calculated_value != None and (self.value == None or calculated_value < self.value):
                 self.policyExecuted = matrix_index
-                self.value = value_candidate
+                self.value = calculated_value
 
     def reward_calc(self, current_state_index, percent_transition, next_state, iteration_index):
         return percent_transition * (reward_default +
@@ -94,21 +94,30 @@ matrix_complete = [fill_transition_matrix('N'), fill_transition_matrix('S'),
 
 build_iteration_zero()
 
-for iteration_index in range(1, 11):
+iteration_index = 1
+continue_iteration = True
+
+while(continue_iteration):
     state_collection = [State() for i in range(state_count)]
     matrix_states_result.append(state_collection)
 
     for current_state_index in range(state_count):
         if current_state_index == goal_state or matrix_states_result[iteration_index - 1][current_state_index].converge:
             matrix_states_result[iteration_index][current_state_index] = matrix_states_result[iteration_index - 1][current_state_index]
+            matrix_states_result[iteration_index][current_state_index].converge = True
             continue
 
         matrix_states_result[iteration_index][current_state_index].value_fuction(
             current_state_index, iteration_index)
 
-        if epson < 1 and (matrix_states_result[iteration_index][current_state_index].value - matrix_states_result[iteration_index - 1][current_state_index].value) < epson:
+        if (matrix_states_result[iteration_index][current_state_index].value - matrix_states_result[iteration_index - 1][current_state_index].value) < epson:
             matrix_states_result[iteration_index][current_state_index].converge = True
 
-for i, matrix_states_result_item in enumerate(matrix_states_result[9]):
-    print("Result -> state: " + str(i) + " policy: " + str(matrix_states_result_item.policyExecuted) +
+    if any(s for s in matrix_states_result[iteration_index] if s.converge == False) == False:
+        continue_iteration = False
+    else:
+        iteration_index += 1
+
+for i, matrix_states_result_item in enumerate(matrix_states_result[(len(matrix_states_result) - 1)]):
+    print("Result -> total iteration: " + str(iteration_index)+" state: " + str(i) + " policy: " + str(matrix_states_result_item.policyExecuted) +
           " calue: " + str(matrix_states_result_item.value) + " converge: " + str(matrix_states_result_item.converge))
