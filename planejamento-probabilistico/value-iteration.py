@@ -1,11 +1,14 @@
 import collections
 
 gama = 1
-reward_default = 1
+reward_default = 1.0
 state_count = 10
-epson = 0.00001  # epson com valor acima de 0.9 não é levado em consideração
+epsilon = 0.00001  # epsilon com valor acima de 0.9 não é levado em consideração
 matrix_states_result = []
-goal_state = 4
+default_state_value = 0.0
+goal_state_index = 4
+goal_state_value = 0.0
+minimize_costs = True
 
 
 def fill_transition_matrix(direction):
@@ -60,7 +63,10 @@ def fill_transition_matrix(direction):
 def build_iteration_zero():
     state_collection = [State() for i in range(state_count)]
     for i in range(state_count):
-        state_collection[i].value = 0
+        state_collection[i].value = default_state_value
+    state_collection[goal_state_index].value = goal_state_value
+    state_collection[goal_state_index].converge = True
+
     matrix_states_result.append(state_collection)
 
 
@@ -78,11 +84,16 @@ class State(object):
                     if calculated_value == None:
                         calculated_value = 0
                     calculated_value += self.reward_calc(current_state_index,
-                                                        percent_transition, next_state, iteration_index)
+                                                         percent_transition, next_state, iteration_index)
 
-            if calculated_value != None and (self.value == None or calculated_value < self.value):
-                self.policyExecuted = matrix_index
-                self.value = calculated_value
+            if minimize_costs:
+                if calculated_value != None and (self.value == None or calculated_value < self.value):
+                    self.policyExecuted = matrix_index
+                    self.value = calculated_value
+            else:
+                if calculated_value != None and (self.value == None or calculated_value > self.value):
+                    self.policyExecuted = matrix_index
+                    self.value = calculated_value
 
     def reward_calc(self, current_state_index, percent_transition, next_state, iteration_index):
         return percent_transition * (reward_default +
@@ -102,15 +113,17 @@ while(continue_iteration):
     matrix_states_result.append(state_collection)
 
     for current_state_index in range(state_count):
-        if current_state_index == goal_state or matrix_states_result[iteration_index - 1][current_state_index].converge:
+        if matrix_states_result[iteration_index - 1][current_state_index].converge:
             matrix_states_result[iteration_index][current_state_index] = matrix_states_result[iteration_index - 1][current_state_index]
-            matrix_states_result[iteration_index][current_state_index].converge = True
             continue
 
         matrix_states_result[iteration_index][current_state_index].value_fuction(
             current_state_index, iteration_index)
 
-        if (matrix_states_result[iteration_index][current_state_index].value - matrix_states_result[iteration_index - 1][current_state_index].value) < epson:
+        new_value = matrix_states_result[iteration_index][current_state_index].value
+        before_value = matrix_states_result[iteration_index - 1][current_state_index].value
+
+        if new_value > 0.0 and (new_value - before_value) < epsilon:
             matrix_states_result[iteration_index][current_state_index].converge = True
 
     if any(s for s in matrix_states_result[iteration_index] if s.converge == False) == False:
