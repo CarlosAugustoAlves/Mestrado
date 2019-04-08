@@ -3,7 +3,7 @@ import collections
 gama = 1
 reward_default = 1.0
 state_count = 10
-epsilon = 0.00001  # epsilon com valor acima de 0.9 não é levado em consideração
+epsilon = 0.00001
 matrix_states_result = []
 default_state_value = 0.0
 goal_state_index = 4
@@ -132,5 +132,5 @@ while(continue_iteration):
         iteration_index += 1
 
 for i, matrix_states_result_item in enumerate(matrix_states_result[(len(matrix_states_result) - 1)]):
-    print("Result -> total iteration: " + str(iteration_index)+" state: " + str(i) + " policy: " + str(matrix_states_result_item.policyExecuted) +
-          " calue: " + str(matrix_states_result_item.value) + " converge: " + str(matrix_states_result_item.converge))
+    print("Iteration: " + str(iteration_index)+" State: " + str(i) + " Policy: " + str(matrix_states_result_item.policyExecuted) +
+          " Value: " + str(matrix_states_result_item.value))
