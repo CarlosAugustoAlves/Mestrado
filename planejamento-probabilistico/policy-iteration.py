@@ -11,7 +11,6 @@ states_count = len(states)
 actions_count = len(actions)
 transition_matrix = numpy.zeros((states_count, actions_count, states_count))
 
-
 transition_matrix[0, 1, 0] = 0.5
 transition_matrix[0, 1, 5] = 0.5
 transition_matrix[0, 2, 0] = 0.5
@@ -67,20 +66,17 @@ while continue_iteration == True:
               " Policy: " + str(policy[state]) + " Value: " + str(V[state]))
 
     for state in range(states_count):
-        if state == goal_state_index:
-            continue
-            
-        best_state_value = sum([transition_matrix[state, policy[state],
-                                                  sNext] * (reward_default + (gama * V[sNext])) for sNext in range(states_count)])
-        best_state_action = policy[state]
+        
+        best_state_value = 0
+        best_state_action = 0
 
         for action in range(actions_count):
             calculed_value = sum([transition_matrix[state, action,
                                                     sNext] * (reward_default + (gama * V[sNext])) for sNext in range(states_count)])
 
             if calculed_value > 0 and (best_state_value == 0 or calculed_value < best_state_value):
-                best_state_action = action
                 best_state_value = calculed_value
+                best_state_action = action
 
         if abs(best_state_value - V[state]) > epsilon:
             policy[state] = best_state_action

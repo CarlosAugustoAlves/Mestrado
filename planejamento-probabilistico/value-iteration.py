@@ -1,136 +1,83 @@
 import collections
+import numpy
 
 gama = 1
-reward_default = 1.0
-state_count = 10
-epsilon = 0.00001
-matrix_states_result = []
-default_state_value = 0.0
+reward_default = 1
 goal_state_index = 4
-goal_state_value = 0.0
-minimize_costs = True
+epsilon = 0.00001
+states = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+actions = [0, 1, 2, 3] # North, South, East, West
+states_count = len(states)
+actions_count = len(actions)
+transition_matrix = numpy.zeros((states_count, actions_count, states_count))
 
+transition_matrix[0, 1, 0] = 0.5
+transition_matrix[0, 1, 5] = 0.5
+transition_matrix[0, 2, 0] = 0.5
+transition_matrix[0, 2, 1] = 0.5
 
-def fill_transition_matrix(direction):
-    matrix = [[0]*state_count for i in range(state_count)]
+transition_matrix[1, 1, 1] = 0.5
+transition_matrix[1, 1, 6] = 0.5
+transition_matrix[1, 2, 1] = 0.5
+transition_matrix[1, 2, 2] = 0.5
 
-    if(direction == 'N'):
-        matrix[5][0] = 1
-        matrix[6][1] = 1
-        matrix[7][2] = 1
-        matrix[8][3] = 1
-        matrix[9][4] = 1
+transition_matrix[2, 1, 2] = 0.5
+transition_matrix[2, 1, 7] = 0.5
+transition_matrix[2, 2, 2] = 0.5
+transition_matrix[2, 2, 3] = 0.5
 
-    if(direction == 'S'):
-        matrix[0][0] = 0.5
-        matrix[0][5] = 0.5
-        matrix[1][1] = 0.5
-        matrix[1][6] = 0.5
-        matrix[2][2] = 0.5
-        matrix[2][7] = 0.5
-        matrix[3][3] = 0.5
-        matrix[3][8] = 0.5
+transition_matrix[3, 1, 3] = 0.5
+transition_matrix[3, 1, 8] = 0.5
+transition_matrix[3, 2, 3] = 0.5
+transition_matrix[3, 2, 4] = 0.5
 
-    if(direction == 'L'):
-        matrix[0][0] = 0.5
-        matrix[0][1] = 0.5
-        matrix[1][1] = 0.5
-        matrix[1][2] = 0.5
-        matrix[2][2] = 0.5
-        matrix[2][3] = 0.5
-        matrix[3][3] = 0.5
-        matrix[3][4] = 0.5
-        matrix[5][6] = 1
-        matrix[6][7] = 1
-        matrix[7][8] = 1
-        matrix[8][9] = 1
+transition_matrix[5, 0, 0] = 1
+transition_matrix[5, 2, 6] = 1
 
-    if(direction == 'O'):
-        matrix[1][1] = 0.5
-        matrix[1][0] = 0.5
-        matrix[2][2] = 0.5
-        matrix[2][1] = 0.5
-        matrix[3][3] = 0.5
-        matrix[3][2] = 0.5
-        matrix[6][5] = 1
-        matrix[7][6] = 1
-        matrix[8][7] = 1
-        matrix[9][8] = 1
+transition_matrix[6, 0, 1] = 1
+transition_matrix[6, 2, 7] = 1
 
-    return matrix
+transition_matrix[7, 0, 2] = 1
+transition_matrix[7, 2, 8] = 1
 
+transition_matrix[8, 0, 3] = 1
+transition_matrix[8, 2, 9] = 1
 
-def build_iteration_zero():
-    state_collection = [State() for i in range(state_count)]
-    for i in range(state_count):
-        state_collection[i].value = default_state_value
-    state_collection[goal_state_index].value = goal_state_value
-    state_collection[goal_state_index].converge = True
+transition_matrix[9, 0, 4] = 1
 
-    matrix_states_result.append(state_collection)
+# First iteration: initialize values arbitrarily, e.g., zero
+Value = [[0.0] * states_count]
+policy = [None for state in range(states_count)]
 
-
-class State(object):
-    value = None
-    policyExecuted = None
-    converge = False
-
-    def value_fuction(self, current_state_index, iteration_index):
-
-        for matrix_index, matrix_item in enumerate(matrix_complete):
-            calculated_value = None
-            for next_state, percent_transition in enumerate(matrix_item[current_state_index]):
-                if percent_transition > 0:
-                    if calculated_value == None:
-                        calculated_value = 0
-                    calculated_value += self.reward_calc(current_state_index,
-                                                         percent_transition, next_state, iteration_index)
-
-            if minimize_costs:
-                if calculated_value != None and (self.value == None or calculated_value < self.value):
-                    self.policyExecuted = matrix_index
-                    self.value = calculated_value
-            else:
-                if calculated_value != None and (self.value == None or calculated_value > self.value):
-                    self.policyExecuted = matrix_index
-                    self.value = calculated_value
-
-    def reward_calc(self, current_state_index, percent_transition, next_state, iteration_index):
-        return percent_transition * (reward_default +
-                                     (gama * matrix_states_result[iteration_index - 1][next_state].value))
-
-
-matrix_complete = [fill_transition_matrix('N'), fill_transition_matrix('S'),
-                   fill_transition_matrix('L'), fill_transition_matrix('O')]
-
-build_iteration_zero()
-
-iteration_index = 1
+iteration = 0
 continue_iteration = True
 
-while(continue_iteration):
-    state_collection = [State() for i in range(state_count)]
-    matrix_states_result.append(state_collection)
+while continue_iteration == True:
+    iteration += 1
+    continue_iteration = False
 
-    for current_state_index in range(state_count):
-        if matrix_states_result[iteration_index - 1][current_state_index].converge:
-            matrix_states_result[iteration_index][current_state_index] = matrix_states_result[iteration_index - 1][current_state_index]
-            continue
+    Value.append([0] * states_count)
 
-        matrix_states_result[iteration_index][current_state_index].value_fuction(
-            current_state_index, iteration_index)
+    for state in range(states_count):
+       
+        best_state_value = 0
+        best_state_action = None
 
-        new_value = matrix_states_result[iteration_index][current_state_index].value
-        before_value = matrix_states_result[iteration_index - 1][current_state_index].value
+        for action in range(actions_count):
+            calculed_value = sum([transition_matrix[state, action,
+                                                    sNext] * (reward_default + (gama * Value[iteration - 1][sNext])) for sNext in range(states_count)])
 
-        if new_value > 0.0 and (new_value - before_value) < epsilon:
-            matrix_states_result[iteration_index][current_state_index].converge = True
+            if calculed_value > 0 and (best_state_value == 0 or calculed_value < best_state_value):
+                best_state_value = calculed_value
+                best_state_action = action
 
-    if any(s for s in matrix_states_result[iteration_index] if s.converge == False) == False:
-        continue_iteration = False
-    else:
-        iteration_index += 1
+        if abs(best_state_value - Value[iteration - 1][state]) > epsilon:
+            Value[iteration][state] = best_state_value
+            policy[state] = best_state_action
+            continue_iteration = True
+        else:
+            Value[iteration][state] = Value[iteration - 1][state]
+            policy[state] = best_state_action
 
-for i, matrix_states_result_item in enumerate(matrix_states_result[(len(matrix_states_result) - 1)]):
-    print("Iteration: " + str(iteration_index)+" State: " + str(i) + " Policy: " + str(matrix_states_result_item.policyExecuted) +
-          " Value: " + str(matrix_states_result_item.value))
+        print("Iteration: "+str(iteration)+" State: " + str(state) +
+              " Policy: " + str(policy[state]) + " Value: " + str(Value[iteration][state]))
