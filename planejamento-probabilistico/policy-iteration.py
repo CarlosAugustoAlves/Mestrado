@@ -6,7 +6,7 @@ reward_default = 1
 goal_state_index = 4
 epsilon = 0.00001
 states = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
-actions = [0, 1, 2, 3]
+actions = [0, 1, 2, 3] # North, South, East, West
 states_count = len(states)
 actions_count = len(actions)
 transition_matrix = numpy.zeros((states_count, actions_count, states_count))
@@ -45,18 +45,19 @@ transition_matrix[8, 2, 9] = 1
 
 transition_matrix[9, 0, 4] = 1
 
-policy = [0 for state in range(states_count)]
-policy[goal_state_index] = None
-
 V = numpy.zeros(states_count)
-
 iteration = 0
 continue_iteration = True
+
+# step 1: initialize policy arbitrarily, e.g., zero
+policy = [0 for state in range(states_count)]
+policy[goal_state_index] = None
 
 while continue_iteration == True:
     iteration += 1
     continue_iteration = False
 
+    # step 2: setting state value for chosen policy
     for state in range(states_count):
         if state != goal_state_index:
             V[state] = sum([transition_matrix[state, policy[state],
@@ -65,10 +66,11 @@ while continue_iteration == True:
         print("Iteration: "+str(iteration)+" State: " + str(state) +
               " Policy: " + str(policy[state]) + " Value: " + str(V[state]))
 
+    # step 3: policy improviment
     for state in range(states_count):
-        
+
         best_state_value = 0
-        best_state_action = 0
+        best_state_action = None
 
         for action in range(actions_count):
             calculed_value = sum([transition_matrix[state, action,
@@ -78,6 +80,7 @@ while continue_iteration == True:
                 best_state_value = calculed_value
                 best_state_action = action
 
+        # step 3.1: stop criteria
         if abs(best_state_value - V[state]) > epsilon:
             policy[state] = best_state_action
             continue_iteration = True
