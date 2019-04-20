@@ -5,14 +5,10 @@ import matplotlib.pylab as plt
 
 current_path = Path().absolute()
 
-gama = 1
-reward_default = 1
-epsilon = 0.00001
-
 # Run Ambiente1
+directory_report = str(current_path) + "\Dados_Relatorio1\Ambiente1"
 states = [state for state in range(135)]
 actions = [0, 1, 2, 3, 4, 5]  # North, South, East, West, Up, Down
-directory_report = str(current_path) + "\Dados_Relatorio1\Ambiente1"
 matrix_draw_max_x = 15
 matrix_draw_max_y = 9
 
@@ -23,6 +19,9 @@ matrix_draw_max_y = 9
 # matrix_draw_max_x = 5
 # matrix_draw_max_y = 2
 
+gama = 1
+reward_default = 1
+epsilon = 0.00001
 states_count = len(states)
 actions_count = len(actions)
 transition_matrix = numpy.zeros((states_count, actions_count, states_count))
@@ -55,7 +54,7 @@ def draw_result_figure():
     img.axes.get_xaxis().set_visible(False)
     img.axes.get_yaxis().set_visible(False)
     # remove rectangle borders and axes plt.axis('off')
-    plt.savefig(directory_report + "\ResultImage.png")
+    plt.savefig(directory_report + "\\value-iteration-results.png")
     #plt.show()
 
 fill_transition_matrix()
@@ -68,7 +67,7 @@ policy = [None for state in range(states_count)]
 
 iteration = 0
 continue_iteration = True
-file_results = open(directory_report + "\Results.txt", "a")
+file_results = open(directory_report + "\\value-iteration-results.txt", "a")
 
 while continue_iteration:
     iteration += 1
