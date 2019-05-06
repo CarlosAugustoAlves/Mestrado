@@ -2,11 +2,11 @@ import collections
 import numpy
 
 gama = 1
-reward_default = 1
+reward_default = -1
 goal_state_index = 4
 epsilon = 0.00001
 states = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
-actions = [0, 1, 2, 3] # North, South, East, West
+actions = [0, 1, 2, 3]  # North, South, East, West
 states_count = len(states)
 actions_count = len(actions)
 transition_matrix = numpy.zeros((states_count, actions_count, states_count))
@@ -51,7 +51,6 @@ continue_iteration = True
 
 # step 1: initialize policy arbitrarily, e.g., zero
 policy = [0 for state in range(states_count)]
-policy[goal_state_index] = None
 
 while continue_iteration == True:
     iteration += 1
@@ -59,9 +58,8 @@ while continue_iteration == True:
 
     # step 2: setting state value for chosen policy
     for state in range(states_count):
-        if state != goal_state_index:
-            V[state] = sum([transition_matrix[state, policy[state],
-                                              sNext] * (reward_default + (gama * V[sNext])) for sNext in range(states_count)])
+        V[state] = sum([transition_matrix[state, policy[state],
+                                          sNext] * (reward_default + (gama * V[sNext])) for sNext in range(states_count)])
 
         print("Iteration: "+str(iteration)+" State: " + str(state) +
               " Policy: " + str(policy[state]) + " Value: " + str(V[state]))
@@ -76,7 +74,7 @@ while continue_iteration == True:
             calculed_value = sum([transition_matrix[state, action,
                                                     sNext] * (reward_default + (gama * V[sNext])) for sNext in range(states_count)])
 
-            if calculed_value > 0 and (best_state_value == 0 or calculed_value < best_state_value):
+            if calculed_value != 0 and (best_state_value == 0 or calculed_value > best_state_value):
                 best_state_value = calculed_value
                 best_state_action = action
 
