@@ -11,7 +11,6 @@ actions_count = len(actions)
 
 transition_matrix = numpy.zeros((states_count, actions_count, states_count))
 
-transition_matrix[4, 0, 4] = 1
 transition_matrix[5, 0, 0] = 1
 transition_matrix[6, 0, 1] = 1
 transition_matrix[7, 0, 2] = 1
@@ -26,7 +25,6 @@ transition_matrix[2, 1, 2] = 0.5
 transition_matrix[2, 1, 7] = 0.5
 transition_matrix[3, 1, 3] = 0.5
 transition_matrix[3, 1, 8] = 0.5
-transition_matrix[4, 1, 4] = 1
 
 transition_matrix[0, 2, 0] = 0.5
 transition_matrix[0, 2, 1] = 0.5
@@ -36,7 +34,7 @@ transition_matrix[2, 2, 2] = 0.5
 transition_matrix[2, 2, 3] = 0.5
 transition_matrix[3, 2, 3] = 0.5
 transition_matrix[3, 2, 4] = 0.5
-transition_matrix[4, 2, 4] = 1
+
 transition_matrix[5, 2, 6] = 1
 transition_matrix[6, 2, 7] = 1
 transition_matrix[7, 2, 8] = 1
@@ -47,7 +45,6 @@ Value = [[0.0] * states_count]
 policy = [None for state in range(states_count)]
 
 reward = [-1 for state in range(states_count)]
-reward[goal_state_index] = 0
 
 iteration = 0
 continue_iteration = True
