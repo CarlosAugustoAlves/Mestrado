@@ -2,6 +2,8 @@ import collections
 import numpy
 from pathlib import Path
 import matplotlib.pylab as plt
+from concurrent.futures import ThreadPoolExecutor
+import functools
 
 current_path = Path().absolute()
 
@@ -45,6 +47,7 @@ def fill_reward_states():
     for line in file_reward.readlines():
         reward.append(float(line))
 
+
 def draw_result_figure():
     matrix_draw_result = numpy.array(
         Value[len(Value) - 1]).reshape((matrix_draw_max_y, matrix_draw_max_x))
@@ -55,7 +58,8 @@ def draw_result_figure():
     img.axes.get_yaxis().set_visible(False)
     # remove rectangle borders and axes plt.axis('off')
     plt.savefig(directory_report + "\\value-iteration-results.png")
-    #plt.show()
+    # plt.show()
+
 
 fill_transition_matrix()
 
@@ -69,39 +73,51 @@ iteration = 0
 continue_iteration = True
 file_results = open(directory_report + "\\value-iteration-results.txt", "a")
 
+@functools.lru_cache(maxsize=None)
+def run_bellman_operator(transition_prop, reward_value, state_next_value):
+    return (transition_prop * (reward_value + (gama * state_next_value)))
+
+
+def calculate_value(state):
+    global continue_iteration
+    best_state_value = 0
+    best_state_action = None
+
+    for action in range(actions_count):
+        calculed_value = sum([run_bellman_operator(transition_matrix[state, action,sNext], reward[sNext], Value[iteration - 1][sNext]) for sNext in range(states_count)])
+
+        if calculed_value != 0 and (best_state_value == 0 or calculed_value > best_state_value):
+            best_state_value = calculed_value
+            best_state_action = action
+
+    if abs(best_state_value - Value[iteration - 1][state]) > epsilon:
+        Value[iteration][state] = best_state_value
+        policy[state] = best_state_action
+        continue_iteration = True
+    else:
+        Value[iteration][state] = Value[iteration - 1][state]
+        policy[state] = best_state_action
+
+    file_results.write("Iteration: "+str(iteration)+" State: " + str(state + 1) +
+                       " Policy: " + str(policy[state]) + " Value: " + str(Value[iteration][state]) + "\n")
+
+
 while continue_iteration:
     iteration += 1
     continue_iteration = False
 
     Value.append([0] * states_count)
 
+    executor = ThreadPoolExecutor(max_workers=10)
+
+    tasks = []
+
     for state in range(states_count):
+        task = executor.submit(calculate_value, state)
+        tasks.append(task)
 
-        best_state_value = 0
-        best_state_action = None
-
-        for action in range(actions_count):
-            calculed_value = sum([transition_matrix[state, action,
-                                                    sNext] * (reward[sNext] + (gama * Value[iteration - 1][sNext])) for sNext in range(states_count)])
-
-            if calculed_value != 0 and (best_state_value == 0 or calculed_value > best_state_value):
-                best_state_value = calculed_value
-                best_state_action = action
-
-        if abs(best_state_value - Value[iteration - 1][state]) > epsilon:
-            Value[iteration][state] = best_state_value
-            policy[state] = best_state_action
-            continue_iteration = True
-        else:
-            Value[iteration][state] = Value[iteration - 1][state]
-            policy[state] = best_state_action
-
-        print("Iteration: "+str(iteration)+" State: " + str(state + 1) + " Policy: " +
-              str(policy[state]) + " Value: " + str(Value[iteration][state]))
-
-        file_results.write("Iteration: "+str(iteration)+" State: " + str(state + 1) +
-                           " Policy: " + str(policy[state]) + " Value: " + str(Value[iteration][state]) + "\n")
-
+    for task in tasks:
+        task.result()
 
 file_results.close()
 
