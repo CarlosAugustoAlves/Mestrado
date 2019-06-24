@@ -1,7 +1,3 @@
 bin
-analise-de-algoritmos-e-estruturas-de-dados/debug
-analise-de-algoritmos-e-estruturas-de-dados/debug.test
-planejamento-probabilistico/Dados_Relatorio1/Ambiente0/*-results.txt
-planejamento-probabilistico/Dados_Relatorio1/Ambiente0/*.png
-planejamento-probabilistico/Dados_Relatorio1/Ambiente1/*-results.txt
-planejamento-probabilistico/Dados_Relatorio1/Ambiente1/*.png
+*.png
+*.txt
