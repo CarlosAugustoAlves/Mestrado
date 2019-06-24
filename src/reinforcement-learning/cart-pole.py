@@ -115,6 +115,6 @@ plt.xlabel('Episódios')
 plt.ylabel('Recompensa') 
 plt.show()
 
-file_results = open('.\DeepQ-Learning-Results.txt', 'a')
+file_results = open('.\DeepQ-Learning-Results.txt', 'w')
 file_results.write(', '.join(str(x) for x in total_rewards))
 file_results.close()

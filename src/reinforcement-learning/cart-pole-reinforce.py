@@ -195,6 +195,6 @@ plt.xlabel('Episódios')
 plt.ylabel('Recompensa')
 plt.show()
 
-file_results = open('.\REINFORCE-Results.txt', 'a')
+file_results = open('.\REINFORCE-Results.txt', 'w')
 file_results.write(', '.join(str(x) for x in rewards))
 file_results.close()
