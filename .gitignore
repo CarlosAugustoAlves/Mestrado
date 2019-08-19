@@ -2,3 +2,4 @@ bin
 *.png
 *results.txt
 *result.txt
+.vscode
