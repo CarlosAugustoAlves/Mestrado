@@ -8,7 +8,7 @@ start_time = datetime.datetime.now()
 
 current_path = Path().absolute()
 
-directory_report = str(current_path) + "\\Datasets\\Env_1"
+directory_report = str(current_path) + "\\datasets\\Env_1"
 
 
 states = [state for state in range(135)]

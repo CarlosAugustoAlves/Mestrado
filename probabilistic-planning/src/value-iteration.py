@@ -6,7 +6,7 @@ import matplotlib.pylab as plt
 current_path = Path().absolute()
 
 # Run Dataset 1
-directory_report = str(current_path) + "\\Datasets\\Env_1"
+directory_report = str(current_path) + "\\datasets\\Env_1"
 states = [state for state in range(135)]
 actions = [0, 1, 2, 3, 4, 5]  # North, South, East, West, Up, Down
 matrix_draw_max_x = 15
