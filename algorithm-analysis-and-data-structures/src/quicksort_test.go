@@ -4,56 +4,53 @@ import (
 	"testing"
 )
 
+// TestQuickSort verifies that the QuickSort function sorts the array correctly
 func TestQuickSort(t *testing.T) {
+	start := 0
+	end := 5
+	array := []int{47, 22, 40, 56, 34, 42}
 
-	posicaoInicio := 0
-	posicaoFinal := 5
-	vetor := []int{47, 22, 40, 56, 34, 42}
+	QuickSort(array, start, end)
 
-	QuickSort(vetor, posicaoInicio, posicaoFinal)
-
-	if !CheckOrdem(vetor, posicaoInicio, posicaoFinal) {
-		t.Errorf("Quuick Sort não funcionou")
+	if !CheckOrder(array, start, end) {
+		t.Errorf("QuickSort failed: the array is not sorted")
 	}
 }
 
-func TestParticione(t *testing.T) {
+// TestPartition verifies that the Partition function correctly positions the pivot
+func TestPartition(t *testing.T) {
+	start := 0
+	end := 5
+	array := []int{47, 22, 40, 56, 34, 42}
 
-	posicaoInicio := 0
-	posicaoFinal := 5
-	vetor := []int{47, 22, 40, 56, 34, 42}
+	pivotPosition := Partition(array, start, end)
 
-	posicaoPivo := Particione(vetor, posicaoInicio, posicaoFinal)
-
-	if !checkParticioneLadoDireito(vetor, posicaoPivo, posicaoFinal) ||
-		!checkParticioneLadoEsquerdo(vetor, posicaoPivo, posicaoInicio) {
-		t.Errorf("Particione não funcionou")
+	if !checkPartitionRightSide(array, pivotPosition, end) ||
+		!checkPartitionLeftSide(array, pivotPosition, start) {
+		t.Errorf("Partition failed: the array is not partitioned correctly")
 	}
 }
 
-func checkParticioneLadoDireito(vetor []int, posicaoPivo int, posicaoFinal int) bool {
-
-	if posicaoPivo < posicaoFinal {
-		if vetor[posicaoPivo] < vetor[posicaoFinal] {
-			posicaoFinal--
-			return checkParticioneLadoDireito(vetor, posicaoPivo, posicaoFinal)
+// checkPartitionRightSide checks that all elements to the right of the pivot are greater or equal
+func checkPartitionRightSide(array []int, pivotPosition int, end int) bool {
+	if pivotPosition < end {
+		if array[pivotPosition] <= array[end] {
+			end--
+			return checkPartitionRightSide(array, pivotPosition, end)
 		}
-
 		return false
 	}
-
 	return true
 }
 
-func checkParticioneLadoEsquerdo(vetor []int, posicaoPivo int, posicaoInicio int) bool {
-
-	if posicaoPivo > posicaoInicio {
-		if vetor[posicaoPivo] > vetor[posicaoInicio] {
-			posicaoInicio++
-			return checkParticioneLadoDireito(vetor, posicaoPivo, posicaoInicio)
+// checkPartitionLeftSide checks that all elements to the left of the pivot are less or equal
+func checkPartitionLeftSide(array []int, pivotPosition int, start int) bool {
+	if pivotPosition > start {
+		if array[pivotPosition] >= array[start] {
+			start++
+			return checkPartitionLeftSide(array, pivotPosition, start)
 		}
 		return false
 	}
-
 	return true
 }

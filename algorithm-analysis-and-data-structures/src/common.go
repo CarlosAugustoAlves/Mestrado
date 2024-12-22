@@ -1,12 +1,12 @@
 package main
 
-//CheckOrdem verifica se o vetor está em ordem crescente
-func CheckOrdem(vetor []int, posicao int, posicaoFinal int) bool {
+// CheckOrder checks if the array is in ascending order
+func CheckOrder(array []int, position int, finalPosition int) bool {
 
-	if posicao+1 <= posicaoFinal {
-		if vetor[posicao] <= vetor[posicao+1] {
-			posicao++
-			return CheckOrdem(vetor, posicao, posicaoFinal)
+	if position+1 <= finalPosition {
+		if array[position] <= array[position+1] {
+			position++
+			return CheckOrder(array, position, finalPosition)
 		}
 
 		return false

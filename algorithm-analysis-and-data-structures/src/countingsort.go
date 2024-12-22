@@ -1,30 +1,31 @@
 package main
 
-//CountingSort algoritmo de ordenação com tempo linear
-func CountingSort(vetorEntrada []int, vetorSaida []int, numeroElementos int, maiorNumero int) {
+// CountingSort is a sorting algorithm with linear time complexity
+func CountingSort(inputArray []int, outputArray []int, numElements int, maxNumber int) {
 
-	var vetorAuxiliar []int
+	var auxiliaryArray []int
 
-	//Carregando vetor auxiliar
-	for i := 0; i <= maiorNumero; i++ {
-		vetorAuxiliar = append(vetorAuxiliar, 0)
+	// Initializing the auxiliary array
+	for i := 0; i <= maxNumber; i++ {
+		auxiliaryArray = append(auxiliaryArray, 0)
 	}
 
-	//Preenche a quantidade de vezes que o elemento I aparece no vetor de entrada
-	for i := 0; i < numeroElementos; i++ {
-		vetorAuxiliar[vetorEntrada[i]] = vetorAuxiliar[vetorEntrada[i]] + 1
+	// Counting the occurrences of each element in the input array
+	for i := 0; i < numElements; i++ {
+		auxiliaryArray[inputArray[i]]++
 	}
 
-	//acumulando os valores do vetor onde o elemento I será a soma dos anteriores
-	//como resultado teremos a posição de cada elemento no vetor de saida
-	for i := 1; i <= maiorNumero; i++ {
-		vetorAuxiliar[i] = vetorAuxiliar[i] + vetorAuxiliar[i-1]
+	// Accumulating values in the auxiliary array
+	// Each element at index i will hold the sum of previous elements.
+	// This determines the position of each element in the output array.
+	for i := 1; i <= maxNumber; i++ {
+		auxiliaryArray[i] += auxiliaryArray[i-1]
 	}
 
-	//Preenchendo o vetor de saída com os elementos
-	//o algoritmo é estável porque mantém a ordem dos elementos da entrada
-	for i := (numeroElementos - 1); i >= 0; i-- {
-		vetorSaida[vetorAuxiliar[vetorEntrada[i]]-1] = vetorEntrada[i]
-		vetorAuxiliar[vetorEntrada[i]] = vetorAuxiliar[vetorEntrada[i]] - 1
+	// Filling the output array with sorted elements.
+	// The algorithm is stable because it preserves the order of duplicate elements.
+	for i := numElements - 1; i >= 0; i-- {
+		outputArray[auxiliaryArray[inputArray[i]]-1] = inputArray[i]
+		auxiliaryArray[inputArray[i]]--
 	}
 }

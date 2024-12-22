@@ -1,89 +1,75 @@
 package main
 
-import (
-	"fmt"
-	"math"
-)
+// MaxHeapify adjusts the heap from the given item position
+func MaxHeapify(array []int, numElements int, itemPosition int) {
+	leftChild := itemPosition * 2
+	rightChild := (itemPosition * 2) + 1
+	var largestPosition int
 
-//MaxHEAPFY função que ajusta o heap a partir do elemento "posicaoItem"
-func MaxHEAPFY(vetor []int, numeroElementos int, posicaoItem int) {
-	posicaoFilhoEsquerdo := posicaoItem * 2
-	posicaoFilhoDireito := ((posicaoItem * 2) + 1)
-	var posicaoItemMaior int
-
-	if posicaoFilhoEsquerdo <= numeroElementos && vetor[posicaoFilhoEsquerdo] > vetor[posicaoItem] {
-		posicaoItemMaior = posicaoFilhoEsquerdo
+	if leftChild <= numElements && array[leftChild] > array[itemPosition] {
+		largestPosition = leftChild
 	} else {
-		posicaoItemMaior = posicaoItem
+		largestPosition = itemPosition
 	}
 
-	if posicaoFilhoDireito <= numeroElementos &&
-		vetor[posicaoFilhoDireito] > vetor[posicaoItemMaior] {
-
-		posicaoItemMaior = posicaoFilhoDireito
+	if rightChild <= numElements && array[rightChild] > array[largestPosition] {
+		largestPosition = rightChild
 	}
 
-	if posicaoItem != posicaoItemMaior {
+	if itemPosition != largestPosition {
+		// Swap the values in the array
+		array[itemPosition], array[largestPosition] = array[largestPosition], array[itemPosition]
 
-		//Invertendo os valores no vetor
-		vetor[posicaoItem], vetor[posicaoItemMaior] = vetor[posicaoItemMaior], vetor[posicaoItem]
-
-		MaxHEAPFY(vetor, numeroElementos, posicaoItemMaior)
+		// Recursively adjust the heap
+		MaxHeapify(array, numElements, largestPosition)
 	}
 }
 
-//BuildMaxHEAP função que torna o vetor um Max Heap
-func BuildMaxHEAP(vetor []int, numeroElementos int) {
-
-	for indexElemento := int(math.Floor(float64(numeroElementos / 2))); indexElemento >= 1; indexElemento-- {
-		MaxHEAPFY(vetor, numeroElementos, indexElemento)
+// BuildMaxHeap converts the array into a Max Heap
+func BuildMaxHeap(array []int, numElements int) {
+	for i := numElements / 2; i >= 1; i-- {
+		MaxHeapify(array, numElements, i)
 	}
 }
 
-//CheckIsHeap veriricar se o vetor é um heap
-func CheckIsHeap(vetor []int, numeroElementosHeap int) bool {
+// CheckIsHeap verifies if the array is a heap
+func CheckIsHeap(array []int, numElements int) bool {
+	checkIndex := 1
 
-	indexItemVerificacao := 1
+	for (checkIndex * 2) <= numElements {
+		leftChild := checkIndex * 2
 
-	for (indexItemVerificacao * 2) <= numeroElementosHeap {
-		indexFilhoEsquerdo := indexItemVerificacao * 2
-
-		if vetor[indexItemVerificacao] < vetor[indexFilhoEsquerdo] {
+		if array[checkIndex] < array[leftChild] {
 			return false
 		}
 
-		indexFilhoDireito := indexFilhoEsquerdo + 1
+		rightChild := leftChild + 1
 
-		if numeroElementosHeap >= indexFilhoDireito && vetor[indexItemVerificacao] < vetor[indexFilhoDireito] {
+		if numElements >= rightChild && array[checkIndex] < array[rightChild] {
 			return false
 		}
 
-		indexItemVerificacao++
+		checkIndex++
 	}
 
 	return true
 }
 
-//HeapSort ordena um vetor utilizando o heap
-func HeapSort(vetor []int, numeroElementos int) {
+// HeapSort sorts an array using the heap sort algorithm
+func HeapSort(array []int, numElements int) {
+	BuildMaxHeap(array, numElements)
 
-	BuildMaxHEAP(vetor, numeroElementos)
+	auxNumElements := numElements
 
-	var numeroElementosAuxiliar int
-	numeroElementosAuxiliar = numeroElementos
+	for numElements > 1 {
+		// Swap the root with the last element
+		array[1], array[numElements] = array[numElements], array[1]
 
-	for numeroElementos > 1 {
-		//Invertendo os valores no vetor
-		vetor[1], vetor[numeroElementos] = vetor[numeroElementos], vetor[1]
+		auxNumElements--
 
-		numeroElementosAuxiliar--
+		// Rebuild the heap
+		MaxHeapify(array, auxNumElements, 1)
 
-		MaxHEAPFY(vetor, numeroElementosAuxiliar, 1)
-
-		numeroElementos--
+		numElements--
 	}
-}
-
-func main() {
-	fmt.Println("Hello Max Heap")
 }

@@ -1,93 +1,82 @@
 package main
 
-import "strconv"
+import (
+	"strconv"
+)
 
-//RadixSort algoritmo de ordenação linear baseada  na quantidade de digitos dos elementos do vetor
-func RadixSort(vetor []int, numeroElementos int, numeroDigito int) {
+// RadixSort performs linear sorting based on the number of digits in the elements of the array
+func RadixSort(array []int, numElements int, numDigits int) {
+	digitArray := make([]int, numElements)
 
-	vetorDigito := make([]int, numeroElementos)
-	posicaoInicio := 0
+	for digitPosition := numDigits - 1; digitPosition >= 0; digitPosition-- {
 
-	for i := (numeroDigito - 1); i >= 0; i-- {
+		fillDigitArray(array, digitArray, 0, numElements, digitPosition) // O(numDigits * Θ(n))
 
-		preencherVetorDigito(vetor, vetorDigito, posicaoInicio, numeroElementos, i) //análise assintótica: numeroDigito*Theta(n)
+		maxValue := findMax(digitArray, 0, numElements, 0) // O(numDigits * Θ(n))
 
-		var maiorNumero int
-		maiorNumero = obterMaximo(vetorDigito, posicaoInicio, numeroElementos, maiorNumero) //análise assintótica: numeroDigito*Theta(n)
+		positionInfo := stableSort(digitArray, numElements, maxValue) // O(numDigits * Θ(n))
 
-		vetorInfoPosicaoTrocada := ordenarLinear(vetorDigito, numeroElementos, maiorNumero) //análise assintótica: numeroDigito*Theta(n)
+		auxArray := make([]int, numElements)
+		copy(auxArray, array) // O(numDigits * Θ(n))
 
-		vetorAuxiliar := make([]int, numeroElementos)
-		copy(vetorAuxiliar, vetor) //análise assintótica: numeroDigito*Theta(n)
-
-		for j := 0; j < numeroElementos; j++ { //análise assintótica: numeroDigito*Theta(n)
-			vetor[vetorInfoPosicaoTrocada[j]] = vetorAuxiliar[j]
+		// Rearrange the original array using position info
+		for i := 0; i < numElements; i++ { // O(numDigits * Θ(n))
+			array[positionInfo[i]] = auxArray[i]
 		}
 	}
 }
 
-func preencherVetorDigito(vetor []int, vetorDigito []int, posicaoInicio int, numeroElementos int, posicaoDigito int) {
+// fillDigitArray extracts the digit at the specified position for each element
+func fillDigitArray(array []int, digitArray []int, start int, numElements int, digitPosition int) {
+	if start < numElements {
+		digitStr := strconv.Itoa(array[start]) // Convert the number to string
 
-	if posicaoInicio < numeroElementos {
-		valorDigitoString := strconv.Itoa(vetor[posicaoInicio])              //converte o número para string
-		valorDigitoString = string([]rune(valorDigitoString)[posicaoDigito]) //obtem caracter por posição
-		valorDigito, err := strconv.Atoi(valorDigitoString)                  //convertendo a caracter para int
-
-		if err != nil {
-			panic(err)
+		// Ensure the string is padded to avoid out-of-range errors
+		if digitPosition >= len(digitStr) {
+			digitArray[start] = 0
+		} else {
+			digitValue, err := strconv.Atoi(string(digitStr[digitPosition])) // Get the character as an integer
+			if err != nil {
+				panic(err)
+			}
+			digitArray[start] = digitValue
 		}
 
-		vetorDigito[posicaoInicio] = valorDigito
-
-		posicaoInicio++
-
-		preencherVetorDigito(vetor, vetorDigito, posicaoInicio, numeroElementos, posicaoDigito)
+		fillDigitArray(array, digitArray, start+1, numElements, digitPosition)
 	}
 }
 
-func obterMaximo(vetorDigito []int, posicaoInicio int, posicaoFim int, valorMaximo int) int {
-
-	if posicaoInicio < posicaoFim {
-
-		if valorMaximo < vetorDigito[posicaoInicio] {
-			valorMaximo = vetorDigito[posicaoInicio]
+// findMax finds the maximum value in an array
+func findMax(array []int, start int, end int, maxValue int) int {
+	if start < end {
+		if maxValue < array[start] {
+			maxValue = array[start]
 		}
-
-		posicaoInicio++
-		valorMaximo = obterMaximo(vetorDigito, posicaoInicio, posicaoFim, valorMaximo)
+		return findMax(array, start+1, end, maxValue)
 	}
-
-	return valorMaximo
+	return maxValue
 }
 
-func ordenarLinear(vetorDigito []int, numeroElementos int, maiorNumero int) []int {
+// stableSort performs a stable sorting of the array based on the current digit
+func stableSort(digitArray []int, numElements int, maxValue int) []int {
+	positionInfo := make([]int, numElements)
+	countArray := make([]int, maxValue+1)
 
-	vetorInfoPosicaoTrocada := make([]int, numeroElementos)
-	var vetorAuxiliar []int
-
-	//Carregando vetor auxiliar
-	for i := 0; i <= maiorNumero; i++ {
-		vetorAuxiliar = append(vetorAuxiliar, 0)
+	// Count occurrences of each digit
+	for i := 0; i < numElements; i++ {
+		countArray[digitArray[i]]++
 	}
 
-	//Preencher a quantidade de vezes que o elemento I aparece no vetor de entrada
-	for i := 0; i < numeroElementos; i++ {
-		vetorAuxiliar[vetorDigito[i]] = vetorAuxiliar[vetorDigito[i]] + 1
+	// Accumulate counts to determine positions
+	for i := 1; i <= maxValue; i++ {
+		countArray[i] += countArray[i-1]
 	}
 
-	//acumulando os valores do vetor onde elemelento I será a soma dos anteriores
-	//como resultado teremos a posição de cada elemenot no vetor de saida
-	for i := 1; i <= maiorNumero; i++ {
-		vetorAuxiliar[i] = vetorAuxiliar[i] + vetorAuxiliar[i-1]
+	// Populate the position info array
+	for i := numElements - 1; i >= 0; i-- {
+		positionInfo[i] = countArray[digitArray[i]] - 1
+		countArray[digitArray[i]]--
 	}
 
-	//Preenchendo o vetor de saída com os itens na ordem do vetor de entrada,
-	//isto faz com que o altoritmo seja estável
-	for i := (numeroElementos - 1); i >= 0; i-- {
-
-		vetorInfoPosicaoTrocada[i] = vetorAuxiliar[vetorDigito[i]] - 1
-		vetorAuxiliar[vetorDigito[i]] = vetorAuxiliar[vetorDigito[i]] - 1
-	}
-
-	return vetorInfoPosicaoTrocada
+	return positionInfo
 }

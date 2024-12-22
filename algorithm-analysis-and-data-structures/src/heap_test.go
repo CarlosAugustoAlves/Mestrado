@@ -5,42 +5,43 @@ import (
 )
 
 /*
-	A posição 0 está sendo ignorada para que o código reflita exatamente o conteúdo do artigo.
-	Após a execucão do algoritmo o vetor deve ser um heap, pois o 100 assumirá a posição 1 e o 36 passará para a posição 3.
+	The 0th position is ignored to reflect the exact content of the article.
+	After the execution of the algorithm, the array should be a max heap.
+	Specifically, 100 will move to position 1, and 36 will move to position 3.
 */
-func TestMaxHEAPFY(t *testing.T) {
+func TestMaxHeapify(t *testing.T) {
+	array := []int{0, 36, 19, 100, 17, 3, 25, 1, 2, 7}
 
-	vetor := []int{0, 36, 19, 100, 17, 3, 25, 1, 2, 7}
+	MaxHeapify(array, 9, 1)
 
-	MaxHEAPFY(vetor, 9, 1)
-
-	if !CheckIsHeap(vetor, 9) {
-		t.Errorf("MAX-HEAPFY não funcionou")
+	if !CheckIsHeap(array, 9) {
+		t.Errorf("MaxHeapify failed: the array is not a max heap")
 	}
 }
 
 /*
-	A posição 0 está sendo ignorada para que o código reflita exatamente o conteúdo do artigo.
-	Após a execucão do algoritmo o vetor deve ser um heap
+	The 0th position is ignored to reflect the exact content of the article.
+	After the execution of the algorithm, the array should be a max heap.
 */
-func TestBuildMaxHEAP(t *testing.T) {
+func TestBuildMaxHeap(t *testing.T) {
+	array := []int{0, 17, 19, 2, 36, 25, 3, 1, 100, 7}
 
-	vetor := []int{0, 17, 19, 2, 36, 25, 3, 1, 100, 7}
+	BuildMaxHeap(array, 9)
 
-	BuildMaxHEAP(vetor, 9)
-
-	if !CheckIsHeap(vetor, 9) {
-		t.Errorf("BUILD-MAX-HEAPFY não funcionou")
+	if !CheckIsHeap(array, 9) {
+		t.Errorf("BuildMaxHeap failed: the array is not a max heap")
 	}
 }
 
+/*
+	TestHeapSort verifies that the heap sort algorithm sorts the array correctly.
+*/
 func TestHeapSort(t *testing.T) {
+	array := []int{0, 17, 19, 2, 36, 25, 3, 1, 100, 7}
 
-	vetor := []int{0, 17, 19, 2, 36, 25, 3, 1, 100, 7}
+	HeapSort(array, 9)
 
-	HeapSort(vetor, 9)
-
-	if !CheckOrdem(vetor, 1, 9) {
-		t.Errorf("Heap-Sort não funcionou")
+	if !CheckOrder(array, 1, 9) {
+		t.Errorf("HeapSort failed: the array is not sorted")
 	}
 }

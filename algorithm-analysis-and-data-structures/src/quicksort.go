@@ -1,50 +1,42 @@
 package main
 
-//QuickSort implementacao do algoritmo
-func QuickSort(vetor []int, posicaoInicio int, posicaoFinal int) {
+// QuickSort implements the QuickSort algorithm
+func QuickSort(array []int, start int, end int) {
+	if start < end {
+		pivotPosition := Partition(array, start, end)
 
-	if posicaoInicio < posicaoFinal {
-		posicaoPivo := Particione2(vetor, posicaoInicio, posicaoFinal)
-
-		QuickSort(vetor, posicaoInicio, posicaoPivo-1)
-		QuickSort(vetor, posicaoPivo+1, posicaoFinal)
+		QuickSort(array, start, pivotPosition-1)
+		QuickSort(array, pivotPosition+1, end)
 	}
 }
 
-//Particione2 retorna a posição do pivô
-func Particione2(v []int, p int, r int) int {
-	var t int
-	for i := p + 1; i <= r; i++ {
-		if v[p] > v[i] {
-			t = v[p]
-			v[p] = v[i]
-			v[i] = t
-		}
-	}
+// Partition rearranges the elements around the pivot and returns its position
+func Partition(array []int, start int, end int) int {
+	pivot := array[end]
+	i := start - 1
 
-	return p
-}
-
-//Particione retorna a posição do pivô
-func Particione(vetor []int, posicaoInicio int, posicaoFinal int) int {
-	pivo := vetor[posicaoFinal]
-
-	i := posicaoInicio - 1
-	j := posicaoInicio
-
-	for j < posicaoFinal {
-		if vetor[j] > pivo {
-			j++
-		} else {
+	for j := start; j < end; j++ {
+		if array[j] <= pivot {
 			i++
-			vetor[i], vetor[j] = vetor[j], vetor[i]
-			j++
+			array[i], array[j] = array[j], array[i]
 		}
 	}
 
+	// Place the pivot in its correct position
 	i++
-
-	vetor[i], vetor[posicaoFinal] = vetor[posicaoFinal], vetor[i]
+	array[i], array[end] = array[end], array[i]
 
 	return i
+}
+
+// Partition2 (optional): Simplified pivoting logic
+// This function swaps elements incorrectly and does not properly partition the array.
+// It is left here for reference but should not be used.
+func Partition2(array []int, start int, end int) int {
+	for i := start + 1; i <= end; i++ {
+		if array[start] > array[i] {
+			array[start], array[i] = array[i], array[start]
+		}
+	}
+	return start
 }
