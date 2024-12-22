@@ -20,7 +20,6 @@ The repository is organized as follows:
 .
 ├── algorithm-analysis-and-data-structures
 │   ├── src/            # Source code
-│   ├── tests/          # Test cases
 │
 ├── probabilistic-planning
 │   ├── README.md       # Details about probabilistic planning
